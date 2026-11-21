@@ -1,10 +1,40 @@
 {
-  "competitors": [
-    { "input": "@devised_" },
-    { "input": "@klawYT" },
-    { "input": "@Lionxo" },
-    { "input": "@s6intx" },
-    { "input": "@arznwz" }
-  ],
-  "timeZone": "America/Los_Angeles"
+ "competitors": [
+  {
+   "input": "@devised_",
+   "id": "UCKEDzreJHNHRTL3NKbqBU2g",
+   "status": "verified",
+   "matchedBy": "handle @devised_",
+   "title": "devised"
+  },
+  {
+   "input": "@klawYT",
+   "id": "UCobh5NnN-5B5_seTu-88IoA",
+   "status": "verified",
+   "matchedBy": "handle @klawYT",
+   "title": "klaw"
+  },
+  {
+   "input": "@Lionxo",
+   "id": "UCnsRRitecBw8Vkx3ix1Ualw",
+   "status": "verified",
+   "matchedBy": "handle @Lionxo",
+   "title": "Lion"
+  },
+  {
+   "input": "@s6intx",
+   "id": "UCZDyA0XAFm2oIVjiWxjx7aw",
+   "status": "verified",
+   "matchedBy": "handle @s6intx",
+   "title": "Saint"
+  },
+  {
+   "input": "@arznwz",
+   "id": "UCNclKk0ehnsygy1knc30mvg",
+   "status": "verified",
+   "matchedBy": "handle @arznwz",
+   "title": "arzn"
+  }
+ ],
+ "timeZone": "America/Los_Angeles"
 }
