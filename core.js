@@ -37,11 +37,12 @@
       'P90', 'Superi-46|Superi', 'Glock', 'Welgun', 'MP-40', 'Tommy Gun', 'AN-94', 'REV-46', 'Draco', 'Blixen', 'Uzi', 'Ryden 45K|Ryden',
       'ARP', 'TR51 Para|TR51', 'Sturmwolf', 'RK-9', 'Dravec-45|Dravec', 'Peacekeeper', 'Striker'],
     relevance: 'warzone|rebirth|resurgence|\\bmw4\\b|hajin|haunted hollow|verdansk|call of duty|\\bcod\\b',
-    exclude: 'warzone mobile|cod mobile|benchmark|\\brtx\\b|dlss|\\bdmz\\b|highlights|funny moments|1440p',
+    exclude: 'warzone mobile|cod mobile|benchmark|\\brtx\\b|dlss|\\bdmz\\b|highlights|funny moments|1440p|\\blive\\b|livestream|🔴',
     resurgenceTerms: 'rebirth|resurgence|haunted hollow|fortune|ashika|vondel',
     focus: ['high-kill', 'movement', 'meta-loadout', 'smg', 'rebirth', 'settings', 'ranked'],
     breakoutRatio: 3,          // flag when views >= 3x the channel's age-adjusted norm
     minBreakoutViews: 2000,    // ignore tiny absolute numbers
+    minBaselineViews: 1500,    // channels whose typical video gets fewer views give unreliable multiples
     decayDays: 4,              // age adjustment: expected share of mature views = 1 - exp(-ageDays / decayDays)
     smallCreatorMaxSubs: 150000,
     saturationChannels: 8,     // distinct uploaders in 48h at which a topic counts as crowded
@@ -328,7 +329,7 @@
       n7: recent.length, n48: c48.length, n24: c24.length, ch48, ch7: uniq(recent.map(v => v.channelId)).length,
       views7: recent.reduce((s, v) => s + (v.views || 0), 0), heat: +heat.toFixed(2), momentum: +m.toFixed(2),
       momentumLabel: momentumLabel(m, quiet), breakouts: breakouts.length, smallBreakouts: small.length,
-      evidence: median(sorted.slice(0, 3).map(v => v.ratio).filter(x => x != null)) || 0,
+      evidence: median(sorted.filter(v => !(v.baseline != null && v.baseline < cfg.minBaselineViews)).slice(0, 3).map(v => v.ratio).filter(x => x != null)) || 0,
       saturated: !umbrella && ch48 >= cfg.saturationChannels && m < 1.1,
       competition: ch48 >= cfg.saturationChannels * 0.75 ? 'High' : ch48 >= cfg.saturationChannels * 0.35 ? 'Medium' : 'Low',
       top: sorted.slice(0, 6).map(v => v.id)
@@ -439,6 +440,7 @@
     ].map(p => ({ ...p, pts: Math.round(p.pts) }));
     if (fading) comp.push({ k: 'Being replaced', max: 0, pts: -15, why: `creators are posting “Goodbye ${weapon}” videos` });
     const raw = comp.reduce((s, p) => s + p.pts, 0), cm = st.n7 >= 3 ? 1 : st.n7 === 2 ? 0.8 : 0.6;
+    if (resShare < 0.3) comp.push({ k: 'Mostly big-map Warzone', max: 0, pts: -Math.round(raw * 0.2), why: `only ${Math.round(resShare * 100)}% of the evidence is Rebirth/Resurgence, so it may not carry over to your niche` });
     if (cm < 1) comp.push({ k: 'Thin evidence', max: 0, pts: -Math.round(raw * (1 - cm)), why: `only ${st.n7} supporting video${st.n7 === 1 ? '' : 's'} this week, so the score is scaled down` });
     const score = Math.max(0, comp.reduce((s, p) => s + p.pts, 0));
     const verdict = st.saturated || fading ? 'Avoid: saturated or fading' : score >= 65 && st.momentum >= 1 && st.n7 >= 2 ? 'Upload today' : score >= 50 && st.momentum >= 0.9 ? 'Upload in 1–2 days' : 'Wait & watch';
@@ -485,7 +487,7 @@
 
     const vids = (research.videos || []).filter(v => v.views != null && !v.live).map(v => {
       const ageHours = Math.max(0.25, (nowMs - Date.parse(v.publishedAt)) / HOUR);
-      const isShort = v.durationSec > 0 && v.durationSec <= cfg.shortMaxSeconds;
+      const isShort = (v.durationSec > 0 && v.durationSec <= cfg.shortMaxSeconds) || /#shorts?\b/i.test(v.title);
       const ch = channels[v.channelId] || {};
       let base = isShort ? ch.baselineShort : ch.baselineLong, baseKind = base ? 'median' : null;
       if (!base && !isShort && ch.baselineProxy) { base = ch.baselineProxy; baseKind = 'proxy'; }
@@ -498,8 +500,8 @@
       const gone = g ? detectWeapons(g[1], compiled) : [];
       return {
         ...v, ageHours, isShort, vph: v.views / ageHours, recentVph, baseline: base ? base.value : null, baseKind,
-        expected, ratio: ratio != null ? +ratio.toFixed(2) : null, lowConfidence: ageHours < 6 || baseKind === 'proxy',
-        breakout: ratio != null && ratio >= cfg.breakoutRatio && v.views >= cfg.minBreakoutViews,
+        expected, ratio: ratio != null ? +ratio.toFixed(2) : null, lowConfidence: ageHours < 6 || baseKind === 'proxy' || (base && base.value < cfg.minBaselineViews),
+        breakout: ratio != null && ratio >= cfg.breakoutRatio && v.views >= cfg.minBreakoutViews && base.value >= cfg.minBaselineViews,
         topics: detectTopics(v.title), weapons: detectWeapons(v.title, compiled).filter(w => !gone.includes(w)), kills: detectKills(v.title),
         resurgence: resRe.test(text), tracked: !!ch.tracked, subs: ch.subs ?? null,
         relevant: v.relevant !== false && !exRe.test(v.title)
@@ -549,7 +551,7 @@
         baseKind: ch.baselineLong ? 'median' : ch.baselineProxy ? 'proxy' : null,
         best: [...vs].sort((a, b) => (b.ratio ?? 0) - (a.ratio ?? 0))[0].id
       };
-    }).filter(c => c.medianRatio != null).sort((a, b) => (b.medianRatio * Math.log10(10 + b.views7)) - (a.medianRatio * Math.log10(10 + a.views7)));
+    }).filter(c => c.medianRatio != null && (c.baseline == null || c.baseline >= cfg.minBaselineViews)).sort((a, b) => (b.medianRatio * Math.log10(10 + b.views7)) - (a.medianRatio * Math.log10(10 + a.views7)));
     const suggested = creators.filter(c => !c.tracked && c.uploads7 >= 2 && pool.filter(v => v.channelId === c.id && v.resurgence).length >= 1).slice(0, 12);
 
     const risingTopics = topics.filter(t => t.momentumLabel === 'Rising' && t.n7 >= 2).map(t => t.id);
