@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resurgence AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a squad's tactical briefing screen: terse, confident, every number sourced.
+   IDEA: the pre-match intel board: today's mission (#1 video) up top, recon below.
+   PICTURE: the #1 recommendation card with its score dial and the real breakout thumbnails behind it.
+   COLOUR and TYPE: gunmetal night, hot signal-orange for opportunity, blue = verified, grey = calculated, violet = prediction. Barlow Condensed headings, Barlow body.
+   LAYOUT: sidebar nav, briefing column; stacks to a top nav row below 900px. */
+:root{color-scheme:dark;--bg:#0c0e12;--panel:#141820;--panel2:#1a1f2a;--line:#262d3a;--ink:#e8ecf2;--mute:#8a95a8;--hot:#ff5a36;--hot2:#ff8a5c;--up:#3ddc84;--down:#7b8799;--v:#5ab0ff;--c:#b5bfcd;--p:#c4a2ff;--warn:#ffcc4d}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Barlow,system-ui,sans-serif;overflow-x:clip}
+a{color:var(--v);text-decoration:none}a:hover{text-decoration:underline}
+h1,h2,h3{font-family:"Barlow Condensed",Barlow,sans-serif;font-weight:700;letter-spacing:.01em;margin:0;line-height:1.1}
+h1{font-size:clamp(28px,4vw,40px)}h2{font-size:22px}h3{font-size:18px}
+.app{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100vh}
+nav{background:#0a0c10;border-right:1px solid var(--line);padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:2px}
+.brand{white-space:nowrap;font:700 24px "Barlow Condensed",Barlow,sans-serif;padding:4px 10px 16px;display:flex;align-items:center;gap:8px}
+.brand i{width:12px;height:12px;background:var(--hot);transform:rotate(45deg);display:inline-block}
+nav a{color:var(--mute);padding:10px 12px;border-radius:8px;font-weight:600;display:block;min-height:40px}
+nav a:hover{background:var(--panel);text-decoration:none;color:var(--ink)}
+nav a.on{background:var(--panel2);color:var(--ink);box-shadow:inset 3px 0 0 var(--hot)}
+nav .sp{flex:1}
+main{padding:22px clamp(14px,3vw,36px) 60px;max-width:1320px;width:100%}
+.top{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:18px}
+.stamp{color:var(--mute);font-size:14px}.stamp b{color:var(--ink)}
+.btn{background:var(--hot);color:#160803;border:0;border-radius:8px;padding:10px 16px;font:600 15px Barlow,system-ui,sans-serif;cursor:pointer;min-height:42px}
+.btn:hover{background:var(--hot2)}.btn.ghost{background:var(--panel2);color:var(--ink);border:1px solid var(--line)}.btn.sm{padding:6px 10px;min-height:32px;font-size:13px}
+.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,nav a:focus-visible{outline:2px solid var(--v);outline-offset:2px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+.grid{display:grid;gap:16px}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.tag{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 7px;border-radius:5px;white-space:nowrap;vertical-align:middle}
+.tv{background:rgba(90,176,255,.14);color:var(--v)}.tc{background:rgba(181,191,205,.12);color:var(--c)}.tp{background:rgba(196,162,255,.14);color:var(--p)}
+.chip{display:inline-block;font-size:12.5px;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--panel2);border:1px solid var(--line);white-space:nowrap}
+.up{color:var(--up)}.down{color:var(--down)}.hot{color:var(--hot)}.warn{color:var(--warn)}.mute{color:var(--mute)}
+.legend{display:flex;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--mute);align-items:center}
+.hero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:0;overflow:hidden;padding:0;border-color:#3a2a25;background:linear-gradient(135deg,#1c1512,#141820 60%)}
+.hero .l{padding:24px}.hero .r{background:#0f1218;border-left:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:10px}
+.kicker{color:var(--hot);font:700 15px "Barlow Condensed",Barlow,sans-serif;letter-spacing:.04em}
+.bigtitle{font:700 clamp(24px,3.2vw,34px)/1.1 "Barlow Condensed",Barlow,sans-serif;margin:8px 0 12px}
+.dial{display:flex;align-items:center;gap:14px;margin:14px 0}
+.dial svg{width:84px;height:84px;flex:none}
+.why{color:#c9d1dc;font-size:15px}
+.vid{display:grid;grid-template-columns:120px minmax(0,1fr);gap:10px;align-items:start;padding:8px 0;border-top:1px solid var(--line)}
+.vid:first-child{border-top:0}
+.vid img{width:120px;aspect-ratio:16/9;object-fit:cover;border-radius:6px;background:#222}
+.vid .t{font-weight:600;font-size:14px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vid .m{font-size:12.5px;color:var(--mute);margin-top:3px}
+.bar{height:8px;background:var(--panel2);border-radius:4px;overflow:hidden}.bar>i{display:block;height:100%;background:var(--hot);border-radius:4px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;padding:9px 0;border-top:1px solid var(--line);align-items:center}
+.row:first-of-type{border-top:0}
+.row .bar{grid-column:1/-1}
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.empty{text-align:left;padding:32px}.empty ol{color:#c9d1dc;padding-left:20px}.empty li{margin:6px 0}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--mute);font-weight:600;font-size:12.5px}
+td.n,th.n{text-align:right;white-space:nowrap}
+.scroll{overflow-x:auto}
+.idea{border-left:3px solid var(--line)}.idea.first{border-left-color:var(--hot)}
+.idea .titles li{margin:4px 0}.idea details{margin-top:8px}
+summary{cursor:pointer;color:var(--mute);font-weight:600}
+.rk{border-top:1px solid var(--line);padding:6px 0;margin:0}.rk:first-of-type{border-top:0}.rk summary{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;color:var(--ink);min-height:44px}.rkn{font:700 18px "Barlow Condensed",Barlow,sans-serif;color:var(--mute)}.rkt{font-weight:600}
+.idea ol{margin:6px 0 10px;padding-left:22px}
+.shift{padding:8px 0;border-top:1px solid var(--line)}.shift:first-of-type{border-top:0}.shift s{color:var(--down)}.shift b{color:var(--up)}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:12px 0}
+.kv div{background:var(--panel2);border-radius:8px;padding:8px 10px}.kv b{display:block;font-size:17px}.kv span{font-size:12px;color:var(--mute)}
+input,select,textarea{background:#0e1117;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:16px Barlow,system-ui,sans-serif;width:100%}
+.inline input[type=checkbox],.check input{flex:none;width:18px;height:18px;padding:0}
+textarea{font:14px/1.5 ui-monospace,Menlo,monospace;min-height:150px}
+label{font-weight:600;font-size:14px;display:block;margin:12px 0 6px}
+.inline{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.inline input,.inline select{width:auto;flex:1 1 180px}
+.check{display:flex;gap:8px;align-items:center;font-weight:500;margin:6px 0}.check input{width:18px;height:18px}
+.note{font-size:13px;color:var(--mute)}
+.banner{border:1px solid #5a4a1a;background:#221d0f;color:#f3e2a8;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:14px}
+.banner.err{border-color:#5a2420;background:#24110f;color:#ffc4b8}
+.fig{position:relative;min-height:320px}.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+.overlay{position:fixed;inset:0;background:rgba(5,6,9,.8);display:none;place-items:center;z-index:9}
+.overlay.on{display:grid}.overlay .panel{width:min(480px,92vw)}
+.md h1{font-size:28px;margin:0 0 8px}.md h2{font-size:21px;margin:22px 0 8px}.md h3{font-size:17px;margin:14px 0 4px}.md blockquote{margin:10px 0;padding:8px 12px;border-left:3px solid var(--p);color:#c9d1dc;background:var(--panel2)}
+.ch{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center}
+.ch img{width:44px;height:44px;border-radius:50%;background:#222}
+.view{display:none}.view.on{display:block}
+.score{font:700 20px "Barlow Condensed",Barlow,sans-serif;white-space:nowrap}
+@media(max-width:1100px){.g3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:900px){.app{grid-template-columns:1fr}nav{position:sticky;height:auto;flex-direction:row;overflow-x:auto;padding:8px;z-index:5;border-right:0;border-bottom:1px solid var(--line)}nav a{flex:none}.brand{padding:6px 10px;flex:none;white-space:nowrap}nav .sp{display:none}.hero{grid-template-columns:1fr}.hero .r{border-left:0;border-top:1px solid var(--line)}}
+@media(max-width:640px){.g3,.g2{grid-template-columns:1fr}table{font-size:13px}.vid{grid-template-columns:96px minmax(0,1fr)}.vid img{width:96px}
+.stack thead{display:none}.stack tr{display:grid;padding-block:8px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7.5em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7em;margin-inline-start:-7.5em;color:var(--mute)}.stack td:empty{display:none}}
+@media(prefers-reduced-motion:no-preference){.view.on{animation:in .25s ease}@keyframes in{from{opacity:0;transform:translateY(4px)}}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+<script src="core.js"></script>
+</head>
+<body>
+<div class="app">
+<nav id="nav">
+  <div class="brand"><i></i>Resurgence AI</div>
+  <a href="#today">Today</a>
+  <a href="#ideas">Top 10 videos</a>
+  <a href="#trends">Trends</a>
+  <a href="#competitors">Competitors</a>
+  <a href="#weapons">Weapons</a>
+  <a href="#viral">Viral detector</a>
+  <a href="#mine">My ideas</a>
+  <a href="#titles">Title ranker</a>
+  <a href="#history">Trend history</a>
+  <a href="#report">Daily report</a>
+  <div class="sp"></div>
+  <a href="#settings">Settings & data</a>
+</nav>
+<main>
+  <div class="top">
+    <div>
+      <div class="stamp" id="stamp">No research yet</div>
+      <div class="legend" style="margin-top:6px"><span class="tag tv">Verified</span>YouTube API data <span class="tag tc">Calculated</span>math on verified data <span class="tag tp">Prediction</span>generated by Resurgence AI</div>
+    </div>
+    <div class="inline"><button class="btn" id="refresh">Run research now</button></div>
+  </div>
+  <div id="banners"></div>
+  <section class="view" id="v-today"></section>
+  <section class="view" id="v-ideas"></section>
+  <section class="view" id="v-trends"></section>
+  <section class="view" id="v-competitors"></section>
+  <section class="view" id="v-weapons"></section>
+  <section class="view" id="v-viral"></section>
+  <section class="view" id="v-titles"></section>
+  <section class="view" id="v-mine"></section>
+  <section class="view" id="v-history"></section>
+  <section class="view" id="v-report"></section>
+  <section class="view" id="v-settings"></section>
+</main>
+</div>
+<div class="overlay" id="overlay"><div class="panel"><h2>Researching YouTube…</h2><p id="prog" class="why">Starting</p><div class="bar"><i id="progbar" style="width:3%"></i></div><p class="note" id="progq"></p></div></div>
+
+<script>
+{
+const C = window.ResurgenceCore;
+const $ = s => document.querySelector(s);
+const esc = C.esc, fmt = C.fmtNum, age = C.fmtAge;
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem('rai.' + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem('rai.' + k, JSON.stringify(v)); return true; } catch (e) { banner('Could not save to browser storage (' + e.message + '). Export your data from Settings.', true); return false; } }
+};
+let config = C.mergeConfig(LS.get('config', {}));
+let research = LS.get('research', null);
+let history = LS.get('history', []);
+let A = null; // analysis
+let ui = { viralWin: 168, viralMin: config.breakoutRatio, viralTracked: false, histKind: 'topics', histSel: null, openCh: null };
+
+function apiKey() { return LS.get('key', ''); }
+function saveConfig() { LS.set('config', config); }
+function banner(msg, err) { const d = document.createElement('div'); d.className = 'banner' + (err ? ' err' : ''); d.innerHTML = msg; $('#banners').appendChild(d); }
+function yt(id) { return 'https://www.youtube.com/watch?v=' + id; }
+function chUrl(id) { return 'https://www.youtube.com/channel/' + id; }
+const tzName = () => config.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+function when(iso) { return new Date(iso).toLocaleString('en-US', { timeZone: tzName(), weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }); }
+const momCls = l => l === 'Rising' ? 'up' : l === 'Cooling' || l === 'Quiet' ? 'down' : '';
+const verdictCls = v => v.startsWith('Upload today') ? 'up' : v.startsWith('Avoid') ? 'hot' : v.startsWith('Upload in') ? 'warn' : 'mute';
+const ratioTxt = v => v.ratio == null ? '<span class="mute">no baseline</span>' : `<b class="${v.ratio >= A.cfg.breakoutRatio ? 'hot' : ''}">${v.ratio.toFixed(1)}×</b>`;
+
+function vidRow(v, extra = '') {
+  return `<div class="vid"><a href="${yt(v.id)}" target="_blank" rel="noopener"><img loading="lazy" src="${esc(v.thumb || '')}" alt=""></a>
+  <div><a class="t" href="${yt(v.id)}" target="_blank" rel="noopener">${esc(v.title)}</a>
+  <div class="m">${esc(v.channelTitle)} · <span title="Verified">${fmt(v.views)} views</span> · ${age(v.ageHours)} ago · ${fmt(v.vph)}/h${v.recentVph != null ? ` (now ${fmt(v.recentVph)}/h)` : ''} · ${ratioTxt(v)} norm${v.lowConfidence ? ' <span class="warn" title="Under 6h old or baseline is a lifetime-average proxy">low conf.</span>' : ''}</div>${extra}</div></div>`;
+}
+function dial(score) {
+  const r = 34, c = 2 * Math.PI * r, col = score >= 65 ? 'var(--hot)' : score >= 50 ? 'var(--warn)' : 'var(--down)';
+  return `<svg viewBox="0 0 84 84" aria-label="Opportunity score ${score} of 100"><circle cx="42" cy="42" r="${r}" fill="none" stroke="#262d3a" stroke-width="8"/><circle cx="42" cy="42" r="${r}" fill="none" stroke="${col}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${c * score / 100} ${c}" transform="rotate(-90 42 42)"/><text x="42" y="48" text-anchor="middle" fill="#e8ecf2" font-family="Barlow Condensed" font-weight="700" font-size="24">${score}</text></svg>`;
+}
+function compTable(comp) { return `<table><tbody>${comp.map(p => `<tr><td>${esc(p.k)}</td><td class="n"><b>${p.pts}</b>/${p.max}</td><td class="mute">${esc(p.why)}</td></tr>`).join('')}</tbody></table>`; }
+
+function emptyState(where) {
+  const hasKey = !!apiKey();
+  return `<div class="panel empty"><h2>${where ? esc(where) + ': no' : 'No'} verified research yet</h2>
+  <p class="why">Resurgence AI only shows real YouTube data. Nothing here is sample or demo data, so this stays empty until research runs.</p>
+  <ol><li>${hasKey ? '<span class="up">✓</span> YouTube API key saved' : '<a href="#settings">Add your YouTube Data API v3 key</a> (free, ~5 minutes; steps in README.md)'}</li>
+  <li>Check your tracked channels in <a href="#competitors">Competitors</a>. They resolve to real channel IDs on the first run.</li>
+  <li>Press <b>Run research now</b>. One run uses about 1,000–1,600 of your 10,000 free daily quota units.</li>
+  <li>For automatic morning reports, set up <code>scripts/daily-research.mjs</code> (see README).</li></ol></div>`;
+}
+
+// ---------------- TODAY ----------------
+function rToday() {
+  const el = $('#v-today');
+  if (!A) { el.innerHTML = emptyState(''); return; }
+  const top = A.ideas[0];
+  const ideaHtml = top ? `<div class="panel hero">
+    <div class="l"><div class="kicker">THE #1 VIDEO TO MAKE RIGHT NOW <span class="tag tp">Prediction</span></div>
+      <div class="bigtitle">${esc(top.titles[0]?.title || top.idea)}</div>
+      <div class="why">${esc(top.idea)}</div>
+      ${top.verdict !== 'Upload today' ? '<p class="note warn">No idea clears the “upload today” bar in this research. This is the strongest option available; the verdict says how urgent it is.</p>' : ''}
+      <div class="dial">${dial(top.score)}<div><div class="score ${verdictCls(top.verdict)}">${esc(top.verdict)}</div><div class="note">Opportunity ${top.score}/100 · competition ${top.competition} · momentum <span class="${momCls(top.momentum)}">${top.momentum}</span> · data confidence ${top.confidence}</div></div></div>
+      <p class="why"><span class="tag tc">Calculated</span> ${esc(top.why)}</p>
+      <p class="why"><b>Thumbnail:</b> ${esc(top.thumbnail)}</p>
+      <p class="note">Alt titles: ${top.titles.slice(1).map(t => esc(t.title)).join(' · ')}</p>
+      <a class="btn ghost sm" href="#ideas">See all 10 ideas and score breakdowns</a></div>
+    <div class="r"><div class="sec-h"><h3>Evidence</h3><span class="tag tv">Verified</span></div>${top.support.map(id => A.byId[id]).filter(Boolean).slice(0, 4).map(v => vidRow(v)).join('')}</div>
+  </div>` : `<div class="panel"><h2>Not enough data for a recommendation</h2><p class="why">Research ran but no topic had 2+ recent videos or a breakout. Try adding more search queries or tracked channels in Settings.</p></div>`;
+  const topics = A.topics.filter(t => t.n7 && !t.umbrella).slice(0, 6), maxH = Math.max(...topics.map(t => t.heat), 1);
+  el.innerHTML = `<h1 style="margin-bottom:6px">Here's what's trending today</h1>
+  <p class="mute" style="margin:0 0 16px">Based on ${A.counts.recent} long-form Warzone videos from the last 7 days across ${A.counts.channels} channels.</p>
+  ${ideaHtml}
+  <div class="grid g3" style="margin-top:16px">
+    <div class="panel"><div class="sec-h"><h3>Today's trends</h3><span class="tag tc">Calculated</span></div>
+      ${topics.map(t => `<div class="row"><div><b>${esc(t.label)}</b> <span class="note">${t.n48} uploads / 48h · ${t.ch48} ch</span></div><span class="chip ${momCls(t.momentumLabel)}">${t.momentumLabel} ${t.momentum}×</span><div class="bar"><i style="width:${(t.heat / maxH * 100).toFixed(0)}%"></i></div></div>`).join('')}
+      <a class="note" href="#trends">All topics →</a></div>
+    <div class="panel"><div class="sec-h"><h3>Creators gaining views</h3><span class="tag tc">Calculated</span></div>
+      ${A.creators.slice(0, 6).map(c => `<div class="row"><div><a href="${chUrl(c.id)}" target="_blank" rel="noopener"><b>${esc(c.title)}</b></a>${c.tracked ? ' <span class="chip">tracked</span>' : ''}<div class="note">${c.uploads7} uploads · ${fmt(c.views7)} views this week</div></div><span class="score">${c.medianRatio.toFixed(1)}×</span></div>`).join('') || '<p class="mute">No creators with baselines yet.</p>'}
+      <p class="note">× = median of this week's uploads vs that creator's own age-adjusted norm.</p></div>
+    <div class="panel"><div class="sec-h"><h3>Blowing up right now</h3><span class="tag tv">Verified</span></div>
+      ${A.breakouts.slice(0, 4).map(v => vidRow(v)).join('') || `<p class="mute">No video is above ${A.cfg.breakoutRatio}× its channel norm this week.</p>`}
+      <a class="note" href="#viral">Viral detector →</a></div>
+  </div>
+  <div class="grid g3" style="margin-top:16px">
+    <div class="panel"><div class="sec-h"><h3>Meta shifts</h3><span class="tag tv">Verified titles</span></div>
+      ${A.shifts.slice(0, 5).map(s => `<div class="shift"><s>${esc(s.from)}</s> → <b>${esc(s.to)}</b> <span class="note">${esc(A.byId[s.video].channelTitle)} · ${C.fmtAge(s.ageHours)} ago</span></div>`).join('') || '<p class="mute">No “Goodbye X, Hello Y” videos in the last 3 weeks.</p>'}
+      <p class="note">Creators announce meta changes in their titles. The weapon on the right is replacing the one on the left.</p></div>
+    <div class="panel"><div class="sec-h"><h3>Also worth recording</h3><span class="tag tp">Prediction</span></div>
+      ${A.ideas.slice(1, 3).map(i => `<div class="row"><div><b>#${i.rank} ${esc(i.titles[0]?.title || i.idea)}</b><div class="note">${esc(i.idea)}</div></div><div style="text-align:right"><div class="score">${i.score}</div><div class="note ${verdictCls(i.verdict)}">${esc(i.verdict)}</div></div></div>`).join('') || '<p class="mute">Not enough data.</p>'}</div>
+    <div class="panel"><div class="sec-h"><h3>Avoid</h3><span class="tag tc">Calculated</span></div>
+      ${A.avoid.map(t => `<div class="row"><div><b>${esc(t.label)}</b><div class="note">${esc(t.why)}</div></div><span class="chip hot">Avoid</span></div>`).join('') || `<p class="mute">Nothing is saturated right now (threshold: ${A.cfg.saturationChannels} channels in 48h with flat momentum).</p>`}</div>
+  </div>`;
+}
+
+// ---------------- IDEAS ----------------
+function rIdeas() {
+  const el = $('#v-ideas');
+  if (!A) { el.innerHTML = emptyState('Top 10 videos'); return; }
+  el.innerHTML = `<div class="sec-h"><h1>Top 10 videos to make</h1><span class="tag tp">Prediction</span></div>
+  <p class="mute">Ranked by opportunity score. Long-form only${A.cfg.includeShorts ? ' (Shorts currently included)' : ''}. Every claim in “Why” comes from the verified videos listed under it.</p>
+  <div class="grid">${A.ideas.map(i => `<div class="panel idea ${i.rank === 1 ? 'first' : ''}">
+    <div class="sec-h"><h2>#${i.rank} ${esc(i.idea)}</h2><span class="score ${verdictCls(i.verdict)}">${i.score}/100 · ${esc(i.verdict)}</span></div>
+    <div class="kv"><div><b>${esc(i.topicLabel)}</b><span>topic</span></div><div><b>${esc(i.weapon || '–')}</b><span>weapon</span></div><div><b>${i.competition}</b><span>competition</span></div><div><b class="${momCls(i.momentum)}">${i.momentum} ${i.momentumValue}×</b><span>trend momentum</span></div><div><b>${i.confidence}</b><span>data confidence</span></div></div>
+    <b>Titles</b> <span class="tag tp">Prediction</span><ol class="titles">${i.titles.map(t => `<li>${esc(t.title)} <span class="note">title score ${t.score}</span></li>`).join('')}</ol>
+    <p><b>Thumbnail concept:</b> ${esc(i.thumbnail)}</p>
+    <p class="why"><b>Why it's trending now</b> <span class="tag tc">Calculated</span><br>${esc(i.why)}</p>
+    <details><summary>Supporting competitor videos (${i.support.length})</summary>${i.support.map(id => A.byId[id]).filter(Boolean).map(v => vidRow(v)).join('')}</details>
+    <details><summary>Score breakdown</summary>${compTable(i.comp)}</details>
+  </div>`).join('') || '<div class="panel">Not enough data to rank ideas.</div>'}</div>`;
+}
+
+// ---------------- TRENDS ----------------
+function rTrends() {
+  const el = $('#v-trends');
+  if (!A) { el.innerHTML = emptyState('Trends'); return; }
+  el.innerHTML = `<div class="sec-h"><h1>Trend radar</h1><span class="tag tc">Calculated</span></div>
+  <div class="inline" style="margin-bottom:12px"><label class="check"><input type="checkbox" id="fShorts" ${config.includeShorts ? 'checked' : ''}> Include Shorts</label><label class="check"><input type="checkbox" id="fRes" ${config.resurgenceOnly ? 'checked' : ''}> Resurgence maps only (hide big-map Warzone)</label></div>
+  <div class="panel"><div class="sec-h"><h3>Opportunity map</h3><span class="note">right = rising, top = fewer channels uploading, size = heat. The shaded top-right is where early opportunities sit.</span></div><div class="fig" id="map"><svg></svg></div></div>
+  <div class="panel scroll" style="margin-top:16px"><table class="stack"><thead><tr><th>Topic</th><th class="n">Heat</th><th class="n">24h</th><th class="n">48h</th><th class="n">7d</th><th class="n">Channels 48h</th><th>Momentum</th><th>Competition</th><th class="n">Breakouts</th><th>History phase</th></tr></thead><tbody>
+  ${A.topics.map(t => `<tr><td><b>${esc(t.label)}</b>${t.saturated ? ' <span class="chip hot">saturated</span>' : ''}</td><td class="n">${t.heat}</td><td class="n">${t.n24}</td><td class="n">${t.n48}</td><td class="n">${t.n7}</td><td class="n">${t.ch48}</td><td class="${momCls(t.momentumLabel)}">${t.momentumLabel} ${t.momentum}×</td><td>${t.competition}</td><td class="n">${t.breakouts}</td><td class="mute">${esc(t.phase)}</td></tr>`).join('')}
+  </tbody></table>
+  <p class="note">Heat = sum of each video's breakout ratio (capped at 10×), weighted toward the last 3 days. Momentum = how strongly the last 48h of uploads beat their own channels' norms, compared with uploads from 2–7 days ago (above 1.25× = rising). Counts are long-form videos found by your search queries and tracked channels, not all of YouTube.</p></div>
+  <div class="grid g2" style="margin-top:16px">${A.topics.filter(t => t.n7).slice(0, 6).map(t => `<div class="panel"><div class="sec-h"><h3>${esc(t.label)}</h3><span class="tag tv">Verified</span></div>${t.top.slice(0, 3).map(id => A.byId[id]).filter(Boolean).map(v => vidRow(v)).join('')}</div>`).join('')}</div>`;
+  $('#fShorts').onchange = e => { config.includeShorts = e.target.checked; saveConfig(); recompute(); };
+  $('#fRes').onchange = e => { config.resurgenceOnly = e.target.checked; saveConfig(); recompute(); };
+  const s = $('#map svg');
+  const pts = A.topics.filter(t => t.n7);
+  const draw = () => {
+    const W = s.clientWidth, H = s.clientHeight, pad = 44;
+    if (!W) return;
+    const maxM = Math.max(2, ...pts.map(p => p.momentum)), maxC = Math.max(A.cfg.saturationChannels, ...pts.map(p => p.ch48)), maxH = Math.max(...pts.map(p => p.heat), 1);
+    const x = m => pad + (Math.min(m, maxM) / maxM) * (W - pad * 2), y = c => pad / 2 + (c / maxC) * (H - pad * 1.5);
+    let g = `<rect x="${x(1)}" y="${pad / 2}" width="${W - pad - x(1)}" height="${(H - pad * 1.5) / 2}" fill="rgba(61,220,132,.06)"/>`;
+    g += `<line x1="${x(1)}" x2="${x(1)}" y1="${pad / 2}" y2="${H - pad}" stroke="#394355" stroke-dasharray="4 4"/>`;
+    g += `<text x="${x(1) + 4}" y="${H - pad + 16}" fill="#8a95a8" font-size="12">1.0× steady</text><text x="${W - pad}" y="${H - pad + 16}" fill="#8a95a8" font-size="12" text-anchor="end">rising →</text>`;
+    g += `<text x="6" y="${pad / 2 + 10}" fill="#8a95a8" font-size="12">few channels</text><text x="6" y="${H - pad}" fill="#8a95a8" font-size="12">crowded</text>`;
+    const small = W < 520, placed = [];
+    pts.forEach(p => { const r = 6 + 16 * Math.sqrt(p.heat / maxH), cx = x(p.momentum), cy = y(p.ch48);
+      g += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${p.momentumLabel === 'Rising' ? 'rgba(255,90,54,.55)' : 'rgba(138,149,168,.35)'}" stroke="${p.momentumLabel === 'Rising' ? '#ff5a36' : '#8a95a8'}"><title>${esc(p.label)}: momentum ${p.momentum}×, ${p.ch48} channels/48h, heat ${p.heat}</title></circle>`;
+      const txt = small ? p.label.split(' ')[0] : p.label, tw = txt.length * 6.6;
+      let lx = cx + r + 4; if (lx + tw > W - 4) lx = cx - r - 4 - tw;
+      let ly = cy + 4;
+      for (const off of [0, 14, -14, 28, -28, 42, -42]) { const yy = cy + 4 + off; if (!placed.some(b => Math.abs(b.y - yy) < 13 && lx < b.x + b.w && lx + tw > b.x)) { ly = yy; break; } }
+      placed.push({ x: lx, y: ly, w: tw });
+      g += `<text x="${lx}" y="${ly}" fill="#e8ecf2" font-size="12">${esc(txt)}</text>`; });
+    s.innerHTML = g;
+  };
+  new ResizeObserver(draw).observe(s); draw();
+}
+
+// ---------------- COMPETITORS ----------------
+function patternsFor(vs) {
+  const good = vs.filter(v => v.ratio != null && v.ratio >= 1.5);
+  const cnt = (arr) => { const m = {}; arr.forEach(x => m[x] = (m[x] || 0) + 1); return Object.entries(m).sort((a, b) => b[1] - a[1]).slice(0, 4); };
+  const topics = cnt(good.flatMap(v => v.topics)).map(([k, n]) => C.TOPIC_BY_ID[k].label + ' ×' + n);
+  const weapons = cnt(good.flatMap(v => v.weapons)).map(([k, n]) => k + ' ×' + n);
+  const caps = cnt(good.flatMap(v => v.title.split(/\s+/).filter(w => /^[A-Z]{3,}$/.test(w.replace(/[^A-Z]/g, '')) && w.replace(/[^A-Z]/g, '').length >= 3).map(w => w.replace(/[^A-Z]/g, '')))).map(([k, n]) => k + ' ×' + n);
+  const kills = good.filter(v => v.kills).length;
+  return { n: good.length, topics, weapons, caps, kills };
+}
+function rCompetitors() {
+  const el = $('#v-competitors');
+  const chans = research ? research.channels : {};
+  const list = config.competitors.map((c, idx) => {
+    const ch = c.id && chans[c.id];
+    const vs = A && c.id ? A.vids.filter(v => v.channelId === c.id).sort((a, b) => a.ageHours - b.ageHours) : [];
+    const recent = vs.filter(v => v.ageHours <= 168 && !v.isShort);
+    const best = [...recent].filter(v => v.ratio != null).sort((a, b) => b.ratio - a.ratio)[0];
+    const st = c.status || (c.id ? 'verified' : 'not yet resolved');
+    const confirm = /auto|weak/.test(st) ? `<button class="btn sm" data-confirm="${idx}">Confirm match</button> <button class="btn ghost sm" data-wrong="${idx}">Wrong channel</button>` : '';
+    const p = patternsFor(vs.filter(v => !v.isShort));
+    return `<div class="panel" style="margin-bottom:12px"><div class="ch">${ch && ch.thumb ? `<img src="${esc(ch.thumb)}" alt="">` : '<img alt="">'}
+      <div><b style="font-size:17px">${ch ? `<a href="${chUrl(c.id)}" target="_blank" rel="noopener">${esc(ch.title)}</a>` : esc(c.input)}</b> <span class="chip ${st === 'verified' ? 'up' : /weak|not|error/.test(st) ? 'hot' : 'warn'}">${esc(st)}</span>
+      <div class="note">input “${esc(c.input)}”${c.matchedBy ? ' · matched by ' + esc(c.matchedBy) : ''}${ch ? ` · ${ch.subs != null ? fmt(ch.subs) + ' subs' : 'subs hidden'} · typical long-form video ${ch.baselineLong ? fmt(ch.baselineLong.value) + ' views (' + esc(ch.baselineLong.type) + ', n=' + ch.baselineLong.n + ')' : 'no baseline yet'}` : ''}</div></div>
+      <div class="inline">${confirm}<button class="btn ghost sm" data-rm="${idx}" aria-label="Remove ${esc(c.input)}">Remove</button>${vs.length ? `<button class="btn ghost sm" data-open="${esc(c.id)}">${ui.openCh === c.id ? 'Hide' : 'Uploads'}</button>` : ''}</div></div>
+      ${ch ? `<div class="kv"><div><b>${recent.length}</b><span>long-form uploads, 7d</span></div><div><b>${fmt(recent.reduce((s, v) => s + v.views, 0))}</b><span>views on them</span></div><div><b class="${best && best.breakout ? 'hot' : ''}">${best ? best.ratio.toFixed(1) + '×' : '–'}</b><span>best vs norm</span></div><div><b>${vs[0] ? age(vs[0].ageHours) + ' ago' : '–'}</b><span>last upload</span></div></div>
+      ${p.n ? `<p class="note"><b>Patterns in their above-norm videos (${p.n}):</b> ${[p.topics.join(', '), p.weapons.length ? 'weapons ' + p.weapons.join(', ') : '', p.caps.length ? 'caps words ' + p.caps.join(', ') : '', p.kills ? p.kills + ' put a kill count in the title' : ''].filter(Boolean).join(' · ')}</p>` : ''}` : ''}
+      ${ui.openCh === c.id ? `<div class="scroll"><table class="stack"><thead><tr><th>Video</th><th class="n">Age</th><th class="n">Views</th><th class="n">VPH</th><th class="n">vs norm</th><th>Topics / weapons</th></tr></thead><tbody>${vs.slice(0, 30).map(v => `<tr><td><a href="${yt(v.id)}" target="_blank" rel="noopener">${esc(v.title)}</a>${v.isShort ? ' <span class="chip">Short</span>' : ''}</td><td class="n">${age(v.ageHours)}</td><td class="n">${fmt(v.views)}</td><td class="n">${fmt(v.vph)}</td><td class="n">${ratioTxt(v)}</td><td class="note">${[...v.topics.map(t => C.TOPIC_BY_ID[t].label), ...v.weapons].join(', ')}</td></tr>`).join('')}</tbody></table></div>` : ''}
+    </div>`;
+  }).join('');
+  el.innerHTML = `<div class="sec-h"><h1>Competitor tracker</h1><span class="tag tv">Verified</span></div>
+  <div class="panel" style="margin-bottom:14px"><label for="addCh">Add a channel</label><div class="inline"><input id="addCh" placeholder="@handle, channel URL, UC… ID, or a name"><button class="btn" id="addBtn">Track</button></div>
+  <p class="note">Handles, URLs and IDs resolve exactly (1 quota unit). Plain names are matched by YouTube search (100 units) and need your confirmation. The starting list (lion, arzn, s6int, anti4k, klawyt) is your names; confirm each match after the first run.</p></div>
+  ${list || '<p class="mute">No channels tracked.</p>'}
+  ${A && A.suggested.length ? `<div class="panel"><div class="sec-h"><h3>Similar creators to consider tracking</h3><span class="tag tc">Calculated</span></div><p class="note">Channels that showed up repeatedly in this week's Resurgence results.</p>${A.suggested.map(c => `<div class="row"><div><a href="${chUrl(c.id)}" target="_blank" rel="noopener"><b>${esc(c.title)}</b></a><div class="note">${c.subs != null ? fmt(c.subs) + ' subs · ' : ''}${c.uploads7} uploads this week · median ${c.medianRatio.toFixed(1)}× norm</div></div><button class="btn ghost sm" data-track="${esc(c.id)}" data-name="${esc(c.title)}">Track</button></div>`).join('')}</div>` : ''}`;
+  const add = () => { const v = $('#addCh').value.trim(); if (!v) return; config.competitors.push({ input: v }); saveConfig(); rCompetitors(); };
+  $('#addBtn').onclick = add; $('#addCh').onkeydown = e => { if (e.key === 'Enter') add(); };
+  el.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { config.competitors.splice(+b.dataset.rm, 1); saveConfig(); rCompetitors(); });
+  el.querySelectorAll('[data-confirm]').forEach(b => b.onclick = () => { config.competitors[+b.dataset.confirm].status = 'verified'; saveConfig(); rCompetitors(); });
+  el.querySelectorAll('[data-wrong]').forEach(b => b.onclick = () => { const c = config.competitors[+b.dataset.wrong]; delete c.id; c.status = 'rejected: paste their @handle or channel URL'; saveConfig(); rCompetitors(); });
+  el.querySelectorAll('[data-open]').forEach(b => b.onclick = () => { ui.openCh = ui.openCh === b.dataset.open ? null : b.dataset.open; rCompetitors(); });
+  el.querySelectorAll('[data-track]').forEach(b => b.onclick = () => { config.competitors.push({ input: b.dataset.name, id: b.dataset.track, status: 'verified', matchedBy: 'suggested from research' }); saveConfig(); rCompetitors(); });
+}
+
+// ---------------- WEAPONS ----------------
+function rWeapons() {
+  const el = $('#v-weapons');
+  if (!A) { el.innerHTML = emptyState('Weapons'); return; }
+  const ws = A.weapons.slice(0, 15), maxH = Math.max(...ws.map(w => w.heat), 1);
+  el.innerHTML = `<div class="sec-h"><h1>Trending weapons</h1><span class="tag tc">Calculated</span></div>
+  <p class="mute">Detected from verified video titles using your weapon list plus automatic code detection (e.g. “XM4”). Edit the list in <a href="#settings">Settings</a> (or config.json) when a new season adds guns. Add nicknames after a “|”, e.g. KAR98K|KAR98.</p>
+  <div class="grid g2"><div class="panel"><div class="sec-h"><h3>Attention this week (heat)</h3></div>
+  ${ws.map(w => `<div class="row"><div><b>${A.leaving.includes(w.name) ? '<s>' + esc(w.name) + '</s>' : esc(w.name)}</b> <span class="note">${w.n7} videos · ${w.ch7} channels</span></div><span class="chip ${momCls(w.momentumLabel)}">${w.momentumLabel} ${w.momentum}×</span><div class="bar"><i style="width:${(w.heat / maxH * 100).toFixed(0)}%"></i></div></div>`).join('') || '<p class="mute">No weapon names found in recent titles.</p>'}</div>
+  <div class="panel scroll"><table class="stack"><thead><tr><th>Weapon</th><th class="n">48h</th><th class="n">7d views</th><th class="n">Breakouts</th><th>Competition</th><th>Phase</th></tr></thead><tbody>
+  ${ws.map(w => `<tr><td><b>${esc(w.name)}</b></td><td class="n">${w.n48}</td><td class="n">${fmt(w.views7)}</td><td class="n">${w.breakouts}</td><td>${w.competition}${w.saturated ? ' <span class="chip hot">saturated</span>' : ''}</td><td class="mute">${esc(w.phase)}</td></tr>`).join('')}</tbody></table></div></div>
+  <div class="panel" style="margin-top:16px"><div class="sec-h"><h3>Meta shifts announced in titles (last 3 weeks)</h3><span class="tag tv">Verified titles</span></div>${A.shifts.map(s => `<div class="shift"><s>${esc(s.from)}</s> → <b>${esc(s.to)}</b> <a class="note" href="${yt(s.video)}" target="_blank" rel="noopener">${esc(A.byId[s.video].channelTitle)}, ${C.fmtAge(s.ageHours)} ago</a></div>`).join('') || '<p class="mute">None found.</p>'}<p class="note">Struck-through weapons above are being replaced. Quiet = no new videos in 48h.</p></div>
+  <div class="grid g2" style="margin-top:16px">${ws.slice(0, 4).map(w => `<div class="panel"><div class="sec-h"><h3>${esc(w.name)}: top videos</h3><span class="tag tv">Verified</span></div>${w.top.slice(0, 3).map(id => A.byId[id]).filter(Boolean).map(v => vidRow(v)).join('')}</div>`).join('')}</div>`;
+}
+
+// ---------------- VIRAL ----------------
+function rViral() {
+  const el = $('#v-viral');
+  if (!A) { el.innerHTML = emptyState('Viral detector'); return; }
+  const list = A.vids.filter(v => v.relevant !== false && v.ratio != null && v.ageHours <= ui.viralWin && v.ratio >= ui.viralMin && v.views >= A.cfg.minBreakoutViews && (A.cfg.includeShorts || !v.isShort) && (!ui.viralTracked || v.tracked)).sort((a, b) => b.ratio - a.ratio);
+  el.innerHTML = `<div class="sec-h"><h1>Viral video detector</h1><span class="tag tc">Calculated</span></div>
+  <p class="mute">A video is flagged when its views beat <b>its own channel's</b> typical video, adjusted for age, so a big creator's normal numbers don't count as viral. Example: a channel that normally gets 5,000 views posts a 2-day-old video with 30,000 → about ${(30000 / (5000 * C.expectedFraction(48, A.cfg.decayDays))).toFixed(0)}× its age-adjusted norm.</p>
+  <div class="panel inline" style="margin-bottom:14px"><label class="check">Window <select id="vw"><option value="24">24 hours</option><option value="48">48 hours</option><option value="168">7 days</option></select></label>
+  <label class="check">Min ratio <select id="vm">${[1.5, 2, 3, 5, 8].map(x => `<option ${x == ui.viralMin ? 'selected' : ''}>${x}</option>`).join('')}</select></label>
+  <label class="check"><input type="checkbox" id="vt" ${ui.viralTracked ? 'checked' : ''}> Tracked channels only</label><span class="note">${list.length} videos</span></div>
+  <div class="panel">${list.slice(0, 40).map(v => {
+    const pct = Math.min(100, v.expected / v.views * 100);
+    return vidRow(v, `<div style="margin-top:6px"><div class="bar"><i style="width:100%;background:var(--hot)"></i></div><div class="bar" style="margin-top:3px"><i style="width:${pct.toFixed(1)}%;background:#5d6778"></i></div><div class="note">actual ${fmt(v.views)} vs expected ${fmt(v.expected)} for a ${age(v.ageHours)}-old video (channel norm ${fmt(v.baseline)}, ${v.baseKind === 'proxy' ? 'lifetime-average proxy' : 'median of recent uploads'}${v.subs != null ? ', ' + fmt(v.subs) + ' subs' : ''})</div></div>`);
+  }).join('') || '<p class="mute">Nothing matches these filters.</p>'}</div>`;
+  $('#vw').value = String(ui.viralWin);
+  $('#vw').onchange = e => { ui.viralWin = +e.target.value; rViral(); };
+  $('#vm').onchange = e => { ui.viralMin = +e.target.value; rViral(); };
+  $('#vt').onchange = e => { ui.viralTracked = e.target.checked; rViral(); };
+}
+
+// ---------------- TITLES ----------------
+function rTitles() {
+  const el = $('#v-titles');
+  const ctx = A ? A.titleCtx : { trendingWeapons: [], risingTopics: [], breakoutTitles: [], realTitles: [], compiledWeapons: C.compileWeapons(config.weapons) };
+  const saved = LS.get('myTitles', '');
+  el.innerHTML = `<div class="sec-h"><h1>Title ranker</h1><span class="tag tp">Prediction</span></div>
+  <p class="mute">Paste your own titles, one per line, and they're ranked best to worst with the reason behind every point. Your list is saved in this browser.</p>
+  <div class="grid g2"><div class="panel"><label for="tl">Your titles (one per line)</label>
+  <textarea id="tl" rows="8" style="font:16px/1.5 Barlow,system-ui,sans-serif" placeholder="95 Kills w/ the M4 Hurricane Meta on Rebirth Island 👑&#10;This SMG Is BROKEN on Rebirth Island&#10;my best game ever">${esc(saved)}</textarea>
+  <div class="inline" style="margin-top:10px"><button class="btn" id="rk">Rank my titles</button><button class="btn ghost" id="rkClear">Clear</button></div>
+  <p class="note">How it scores (100 total): length 35–60 characters (15) · says Rebirth/Resurgence/Warzone (15) · kill count or weapon name (15) · 1–3 CAPS power words (10) · uses a weapon or topic that's hot in this week's real data (25) · matches the word patterns of this week's breakout titles without copying one (20). This is not a CTR prediction: YouTube doesn't share other creators' CTR.</p></div>
+  <div class="panel" id="rkOut"><p class="mute">Your ranking appears here.</p></div></div>
+  <div class="grid g2" style="margin-top:16px"><div class="panel"><h3>Need ideas? Generate titles</h3><div class="grid g2"><div><label for="gt">Video type</label><select id="gt">${Object.keys(C.TITLE_TEMPLATES).map(k => `<option value="${k}">${esc(C.TOPIC_BY_ID[k] ? C.TOPIC_BY_ID[k].label : k)}</option>`).join('')}</select></div>
+  <div><label for="gw">Weapon</label><input id="gw" list="wl" value="${esc(A && A.titleCtx.trendingWeapons[0] ? A.titleCtx.trendingWeapons[0] : '')}"><datalist id="wl">${(A ? A.weapons.map(w => w.name) : config.weapons.map(w => w.split('|')[0])).map(w => `<option>${esc(w)}</option>`).join('')}</datalist></div>
+  <div><label for="go">Replacing (optional)</label><input id="go" list="wl" placeholder="e.g. VEL-46"></div>
+  <div><label for="gk">Your kill count</label><input id="gk" type="number" min="0" placeholder="e.g. 120"></div></div><div id="gen" style="margin-top:12px"></div></div>
+  <div class="panel"><div class="sec-h"><h3>This week's breakout titles (learn the pattern, don't copy)</h3><span class="tag tv">Verified</span></div>
+  ${A ? A.breakouts.slice(0, 12).map(v => `<div class="row"><a href="${yt(v.id)}" target="_blank" rel="noopener">${esc(v.title)}</a><span class="note">${esc(v.channelTitle)} · ${v.ratio.toFixed(1)}×</span></div>`).join('') || '<p class="mute">No breakouts this week.</p>' : '<p class="mute">Run research to see real breakout titles.</p>'}</div></div>`;
+  const rank = () => {
+    const lines = $('#tl').value.split('\n');
+    LS.set('myTitles', $('#tl').value);
+    const r = C.rankTitles(lines, ctx);
+    $('#rkOut').innerHTML = r.length ? `<div class="sec-h"><h3>Ranking</h3><span class="note">${A ? 'Using research from ' + esc(when(A.researchedAt)) : 'No research yet: trend points will be 0'}</span></div>` + r.map(x => `<details class="rk"><summary><span class="rkn">#${x.rank}</span><span class="rkt">${esc(x.title)}</span><span class="score ${x.score >= 75 ? 'up' : x.score >= 55 ? '' : x.score >= 40 ? 'warn' : 'hot'}">${x.score} · ${x.grade}</span></summary>${compTable(x.parts)}${x.parts.filter(p => p.pts < p.max).length ? `<p class="note"><b>To improve:</b> ${x.parts.filter(p => p.pts < p.max).map(p => esc(p.k.toLowerCase())).join(', ')}.</p>` : ''}</details>`).join('') : '<p class="mute">Add at least one title.</p>';
+  };
+  $('#rk').onclick = rank; $('#rkClear').onclick = () => { $('#tl').value = ''; LS.set('myTitles', ''); rank(); };
+  if (saved.trim()) rank();
+  const gen = () => {
+    const t = $('#gt').value, W = $('#gw').value.trim(), O = $('#go').value.trim(), K = $('#gk').value;
+    const pool = [...new Set(C.TITLE_TEMPLATES[t].concat(C.TITLE_TEMPLATES['meta-loadout']))].map(x => (x.includes('{W}') && !W) || (x.includes('{OLD}') && (!O || O === W)) ? null : x.replace(/\{W\}/g, W).replace(/\{OLD\}/g, O).replace(/XX/g, K || 'XX')).filter(Boolean);
+    const out = C.rankTitles(pool, ctx).slice(0, 6);
+    $('#gen').innerHTML = out.map(o => `<div class="row"><span>${esc(o.title)}</span><button class="btn ghost sm" data-add="${esc(o.title)}">${o.score} · add to my list</button></div>`).join('') + `<p><b>Thumbnail concept:</b> ${esc((C.THUMB_TEMPLATES[t] || C.THUMB_TEMPLATES['meta-loadout']).replace(/\{W\}/g, W || 'your main weapon').replace(/XX/g, K || 'XX'))}</p>`;
+    $('#gen').querySelectorAll('[data-add]').forEach(b => b.onclick = () => { const ta = $('#tl'); ta.value = (ta.value.trim() ? ta.value.trim() + '\n' : '') + b.dataset.add; rank(); });
+  };
+  ['#gt', '#gw', '#go', '#gk'].forEach(s => $(s).oninput = gen); gen();
+}
+
+// ---------------- MY IDEAS ----------------
+function rMine() {
+  const el = $('#v-mine');
+  const list = LS.get('myIdeas', []);
+  const evals = A ? list.map((t, i) => ({ i, ...(C.evaluateIdea(t, A) || {}) })).sort((a, b) => (b.score ?? -1) - (a.score ?? -1)) : list.map((t, i) => ({ i, text: t }));
+  el.innerHTML = `<div class="sec-h"><h1>My ideas</h1><span class="tag tp">Prediction</span></div>
+  <p class="mute">Type your own video ideas in plain words, like “M4 Hurricane high-kill game” or “my low sens controller settings”. Each one is checked against this week's real videos and ranked by the same opportunity score as the Top 10. Your list is saved in this browser.</p>
+  <div class="panel" style="margin-bottom:14px"><label for="mi">New idea</label><div class="inline"><input id="mi" placeholder="e.g. X-58 NYX movement game on Rebirth"><button class="btn" id="miAdd">Add & score</button></div></div>
+  ${!A ? '<div class="panel"><p class="mute">Ideas are scored once research has run.</p></div>' : ''}
+  ${evals.length ? evals.map((e, n) => `<div class="panel idea ${n === 0 && e.score != null ? 'first' : ''}" style="margin-bottom:12px">
+    <div class="sec-h"><h2>${e.score != null ? '#' + (n + 1) + ' ' : ''}${esc(e.text)}</h2><div class="inline">${e.score != null ? `<span class="score ${verdictCls(e.verdict)}">${e.score}/100 · ${esc(e.verdict)}</span>` : `<span class="chip warn">${esc(e.verdict || 'Not scored')}</span>`}<button class="btn ghost sm" data-del="${e.i}" aria-label="Delete idea">Delete</button></div></div>
+    ${e.matched ? `<div class="kv"><div><b>${esc(e.topicLabel)}</b><span>detected topic</span></div><div><b>${esc(e.weapon || '–')}</b><span>detected weapon</span></div>${e.score != null ? `<div><b>${e.competition}</b><span>competition</span></div><div><b class="${momCls(e.momentum)}">${e.momentum} ${e.momentumValue}×</b><span>momentum</span></div><div><b>${e.confidence}</b><span>data confidence</span></div>` : ''}</div>` : ''}
+    ${(e.notes || []).map(x => `<p class="note warn">${esc(x)}</p>`).join('')}
+    ${e.why ? `<p class="why"><span class="tag tc">Calculated</span> ${esc(e.why)}</p>` : ''}
+    ${e.titles && e.titles.length ? `<b>Suggested titles</b> <span class="tag tp">Prediction</span><ol>${e.titles.map(t => `<li>${esc(t.title)} <span class="note">title score ${t.score}</span></li>`).join('')}</ol><p><b>Thumbnail:</b> ${esc(e.thumbnail)}</p>` : ''}
+    ${e.support && e.support.length ? `<details><summary>Real videos behind this score (${e.support.length})</summary>${e.support.map(id => vidRow(A.byId[id])).join('')}</details>` : ''}
+    ${e.comp && e.comp.length ? `<details><summary>Score breakdown</summary>${compTable(e.comp)}</details>` : ''}
+  </div>`).join('') : '<div class="panel"><p class="mute">No ideas yet. Add your first one above.</p></div>'}`;
+  const add = () => { const v = $('#mi').value.trim(); if (!v) return; const l = LS.get('myIdeas', []); l.push(v); LS.set('myIdeas', l); rMine(); };
+  $('#miAdd').onclick = add; $('#mi').onkeydown = e => { if (e.key === 'Enter') add(); };
+  el.querySelectorAll('[data-del]').forEach(b => b.onclick = () => { const l = LS.get('myIdeas', []); l.splice(+b.dataset.del, 1); LS.set('myIdeas', l); rMine(); });
+}
+
+// ---------------- HISTORY ----------------
+function rHistory() {
+  const el = $('#v-history');
+  const snaps = [...history].sort((a, b) => Date.parse(a.at) - Date.parse(b.at));
+  const kind = ui.histKind;
+  const keys = kind === 'topics' ? C.TOPICS.map(t => t.id) : [...new Set(snaps.flatMap(s => Object.keys(s.weapons || {})))];
+  const label = k => kind === 'topics' ? C.TOPIC_BY_ID[k].label : k;
+  const last = snaps[snaps.length - 1] || {};
+  const ranked = keys.map(k => ({ k, v: (last[kind] || {})[k] || 0 })).sort((a, b) => b.v - a.v);
+  if (!ui.histSel || !ui.histSel.every(k => keys.includes(k))) ui.histSel = ranked.slice(0, 4).map(r => r.k);
+  const phases = keys.map(k => { const series = snaps.map(s => (s[kind] || {})[k] || 0); return { k, series, ...phaseOf(series) }; }).filter(p => p.series.some(x => x > 0)).sort((a, b) => b.series[b.series.length - 1] - a.series[a.series.length - 1]);
+  el.innerHTML = `<div class="sec-h"><h1>Trend history</h1><span class="tag tc">Calculated</span></div>
+  <p class="mute">${snaps.length} daily snapshot(s) stored${snaps.length ? `, ${esc(snaps[0].date)} → ${esc(last.date)}` : ''}. Rising/peaking/declining needs at least 3 days. Snapshots are saved automatically each time research runs (once per day is kept).</p>
+  <div class="panel"><div class="inline" style="margin-bottom:8px"><select id="hk" style="flex:0 1 160px"><option value="topics">Topics</option><option value="weapons">Weapons</option></select>
+  ${ranked.slice(0, 12).map(r => `<label class="check" style="margin-right:8px"><input type="checkbox" data-hs="${esc(r.k)}" ${ui.histSel.includes(r.k) ? 'checked' : ''}> ${esc(label(r.k))}</label>`).join('')}</div>
+  <div class="fig" id="hfig"><svg></svg></div></div>
+  <div class="panel scroll" style="margin-top:16px"><table class="stack"><thead><tr><th>${kind === 'topics' ? 'Topic' : 'Weapon'}</th><th>Phase</th><th class="n">Latest heat</th><th class="n">Previous</th><th class="n">Peak</th></tr></thead><tbody>
+  ${phases.map(p => `<tr><td><b>${esc(label(p.k))}</b></td><td class="${p.code === 'up' ? 'up' : p.code === 'down' ? 'down' : p.code === 'peak' ? 'warn' : 'mute'}">${esc(p.phase)}</td><td class="n">${p.series[p.series.length - 1]}</td><td class="n">${p.series.length > 1 ? p.series[p.series.length - 2] : '–'}</td><td class="n">${Math.max(...p.series)}</td></tr>`).join('') || '<tr><td colspan="5" class="mute">No history yet.</td></tr>'}</tbody></table></div>`;
+  $('#hk').value = kind;
+  $('#hk').onchange = e => { ui.histKind = e.target.value; ui.histSel = null; rHistory(); };
+  el.querySelectorAll('[data-hs]').forEach(b => b.onchange = () => { const k = b.dataset.hs; ui.histSel = b.checked ? [...ui.histSel, k] : ui.histSel.filter(x => x !== k); rHistory(); });
+  const s = $('#hfig svg'), cols = ['#ff5a36', '#5ab0ff', '#3ddc84', '#ffcc4d', '#c4a2ff', '#ff8fb1', '#7fe0e0', '#d0d6df'];
+  const draw = () => {
+    const W = s.clientWidth, H = s.clientHeight; if (!W) return;
+    if (snaps.length < 2) { s.innerHTML = `<text x="${W / 2}" y="${H / 2}" text-anchor="middle" fill="#8a95a8" font-size="14">The chart appears after 2 days of snapshots.</text>`; return; }
+    const pl = 40, pr = 16, pt = 14, pb = 30;
+    const series = ui.histSel.map(k => snaps.map(sn => (sn[kind] || {})[k] || 0));
+    const maxY = Math.max(1, ...series.flat());
+    const x = i => pl + i * (W - pl - pr) / (snaps.length - 1), y = v => pt + (1 - v / maxY) * (H - pt - pb);
+    let g = '';
+    for (let i = 0; i <= 4; i++) { const v = maxY * i / 4; g += `<line x1="${pl}" x2="${W - pr}" y1="${y(v)}" y2="${y(v)}" stroke="#20262f"/><text x="${pl - 6}" y="${y(v) + 4}" fill="#8a95a8" font-size="11" text-anchor="end">${v.toFixed(0)}</text>`; }
+    const step = Math.ceil(snaps.length / (W < 520 ? 4 : 8));
+    snaps.forEach((sn, i) => { if (i % step === 0 || i === snaps.length - 1) g += `<text x="${x(i)}" y="${H - 8}" fill="#8a95a8" font-size="11" text-anchor="middle">${esc(sn.date.slice(5))}</text>`; });
+    series.forEach((ser, j) => { const c = cols[j % cols.length]; g += `<polyline fill="none" stroke="${c}" stroke-width="2.5" points="${ser.map((v, i) => x(i) + ',' + y(v)).join(' ')}"/>`; ser.forEach((v, i) => g += `<circle cx="${x(i)}" cy="${y(v)}" r="3" fill="${c}"><title>${esc(label(ui.histSel[j]))} ${esc(snaps[i].date)}: ${v}</title></circle>`); g += `<text x="${W - pr}" y="${pt + 14 + j * 16}" fill="${c}" font-size="12" text-anchor="end">${esc(label(ui.histSel[j]))}</text>`; });
+    s.innerHTML = g;
+  };
+  new ResizeObserver(draw).observe(s); draw();
+}
+function phaseOf(series) {
+  if (series.length < 3) return { phase: 'Needs 3+ days', code: 'na' };
+  const l = series[series.length - 1], p = series[series.length - 2], p2 = series[series.length - 3], mx = Math.max(...series);
+  if (l >= p * 1.15) return { phase: 'Rising', code: 'up' };
+  if (l <= p * 0.85) return { phase: series.slice(-4).includes(mx) ? 'Peaked, now declining' : 'Declining', code: 'down' };
+  if (l >= 0.9 * mx && p >= p2 * 1.1) return { phase: 'Peaking', code: 'peak' };
+  return { phase: 'Flat', code: 'flat' };
+}
+
+// ---------------- REPORT ----------------
+function md2html(md) {
+  return md.split('\n').map(line => {
+    let l = esc(line).replace(/\[([^\]]+)\]\((https:\/\/www\.youtube\.com\/watch\?v=[\w-]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/(^|\s)_([^_]+)_(\s|$)/g, '$1<i>$2</i>$3');
+    if (l.startsWith('### ')) return `<h3>${l.slice(4)}</h3>`;
+    if (l.startsWith('## ')) return `<h2>${l.slice(3)}</h2>`;
+    if (l.startsWith('# ')) return `<h1>${l.slice(2)}</h1>`;
+    if (l.startsWith('&gt; ')) return `<blockquote>${l.slice(5)}</blockquote>`;
+    if (l.startsWith('- ')) return `<div style="margin:4px 0 4px 14px">• ${l.slice(2)}</div>`;
+    return l ? `<p style="margin:6px 0">${l}</p>` : '';
+  }).join('');
+}
+function rReport() {
+  const el = $('#v-report');
+  if (!A) { el.innerHTML = emptyState('Daily report'); return; }
+  const md = C.report(A, { timeZone: tzName() });
+  el.innerHTML = `<div class="sec-h"><h1>Daily report</h1><div class="inline"><button class="btn ghost sm" id="cp">Copy as Markdown</button><button class="btn ghost sm" id="dl">Download .md</button></div></div><div class="panel md">${md2html(md)}</div>`;
+  $('#cp').onclick = async () => { try { await navigator.clipboard.writeText(md); $('#cp').textContent = 'Copied'; } catch { $('#cp').textContent = 'Copy blocked by browser'; } };
+  $('#dl').onclick = () => download(`resurgence-report-${A.researchedAt.slice(0, 10)}.md`, md, 'text/markdown');
+}
+function download(name, text, type) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
+
+// ---------------- SETTINGS ----------------
+function rSettings() {
+  const el = $('#v-settings');
+  const unresolved = config.competitors.filter(c => !c.id).length;
+  const est = unresolved * 100 + config.queries.length * 100 + 10 + Math.min(config.maxDiscoveredChannels + config.competitors.length, 200) * 2 + 20;
+  el.innerHTML = `<h1 style="margin-bottom:14px">Settings & data connections</h1>
+  <div class="grid g2">
+  <div class="panel"><h3>YouTube Data API v3 key <span class="chip warn">required</span></h3>
+    <p class="note">Powers all verified data. Free from Google Cloud Console (10,000 quota units/day). Stored only in this browser's local storage. Restrict the key to the YouTube Data API v3 in Google Cloud.</p>
+    <label for="key">API key</label><div class="inline"><input id="key" type="password" autocomplete="off" value="${esc(apiKey())}" placeholder="AIza…"><button class="btn ghost" id="saveKey">Save</button><button class="btn ghost" id="testKey">Test (1 unit)</button></div><p id="keyMsg" class="note"></p>
+    <p class="note">Estimated cost of the next run: <b>~${est} units</b> (${config.queries.length} searches × 100, ${unresolved} name lookups × 100, ~2 units per channel baseline).</p>
+    <h3 style="margin-top:18px">Other connections</h3>
+    <table><tbody>
+      <tr><td><b>Daily automation</b></td><td><span class="chip">optional</span></td><td class="note">Node 18+ script, run by cron, Task Scheduler or GitHub Actions. Uses the same YouTube key, set as an environment variable or secret.</td></tr>
+      <tr><td><b>LLM for richer titles</b></td><td><span class="chip">not used</span></td><td class="note">Ideas and titles come from templates driven by verified data. Adding an OpenAI or Anthropic key is a possible extension; see README.</td></tr>
+      <tr><td><b>CTR, impressions, retention</b></td><td><span class="chip hot">unavailable</span></td><td class="note">YouTube only shares these for your own channel (YouTube Analytics API, OAuth). Competitors' values can't be obtained legitimately.</td></tr>
+    </tbody></table>
+  </div>
+  <div class="panel"><h3>Research tuning</h3>
+    <div class="grid g2">
+      <div><label for="sBr">Breakout threshold (× norm)</label><input id="sBr" type="number" step="0.5" min="1" value="${config.breakoutRatio}"></div>
+      <div><label for="sMin">Min views for a breakout</label><input id="sMin" type="number" min="0" value="${config.minBreakoutViews}"></div>
+      <div><label for="sDec">Age adjustment (days)</label><input id="sDec" type="number" step="0.5" min="1" value="${config.decayDays}"></div>
+      <div><label for="sSmall">“Small creator” max subs</label><input id="sSmall" type="number" min="0" value="${config.smallCreatorMaxSubs}"></div>
+      <div><label for="sSat">Saturation: channels in 48h</label><input id="sSat" type="number" min="2" value="${config.saturationChannels}"></div>
+      <div><label for="sDisc">Max discovered channels</label><input id="sDisc" type="number" min="0" max="300" value="${config.maxDiscoveredChannels}"></div>
+      <div><label for="sReg">Region code</label><input id="sReg" value="${esc(config.regionCode)}"></div>
+      <div><label for="sTz">Report time zone</label><input id="sTz" value="${esc(tzName())}"></div>
+    </div>
+    <p class="note">Age adjustment: a video aged t days is expected to have 1 − e^(−t/${config.decayDays}) of a mature video's views (24h ≈ ${(C.expectedFraction(24, config.decayDays) * 100).toFixed(0)}%, 48h ≈ ${(C.expectedFraction(48, config.decayDays) * 100).toFixed(0)}%, 7d ≈ ${(C.expectedFraction(168, config.decayDays) * 100).toFixed(0)}%). This is an assumption you can tune, not a YouTube figure.</p>
+    <label>Your focus (raises “fits your channel”)</label><div>${C.TOPICS.map(t => `<label class="check" style="display:inline-flex;margin-right:12px"><input type="checkbox" data-focus="${t.id}" ${config.focus.includes(t.id) ? 'checked' : ''}> ${esc(t.label)}</label>`).join('')}</div>
+  </div>
+  <div class="panel"><h3>Search queries</h3><p class="note">One per line: <code>query | viewCount or date | hours back</code>. Each costs 100 units.</p><textarea id="sQ">${esc(config.queries.map(q => `${q.q} | ${q.order} | ${q.hours}`).join('\n'))}</textarea></div>
+  <div class="panel"><h3>Weapon names</h3><p class="note">One per line. Keep this in sync with the current season; codes like “XM4” are also auto-detected.</p><textarea id="sW">${esc(config.weapons.join('\n'))}</textarea></div>
+  <div class="panel"><h3>Data</h3><p class="note">Latest research: ${research ? esc(when(research.researchedAt)) : 'none'} · ${history.length} history snapshot(s).</p>
+    <div class="inline"><button class="btn ghost" id="exp">Export all (JSON)</button><label class="btn ghost" style="margin:0;display:inline-flex;align-items:center">Import JSON<input id="imp" type="file" accept=".json,application/json" style="display:none"></label><button class="btn ghost" id="cfgCopy">Copy config.json for daily script</button><button class="btn ghost" id="clr">Clear research & history</button></div>
+    <p class="note">Import accepts this app's export, or <code>data/latest.json</code> / <code>data/history.json</code> written by the daily script.</p><p id="dataMsg" class="note"></p></div>
+  </div>
+  <div style="margin-top:14px" class="inline"><button class="btn" id="saveAll">Save settings</button><button class="btn ghost" id="reset">Reset to defaults</button><span id="saveMsg" class="note"></span></div>`;
+  $('#saveKey').onclick = () => { LS.set('key', $('#key').value.trim()); $('#keyMsg').textContent = 'Saved in this browser.'; };
+  $('#testKey').onclick = async () => {
+    const k = $('#key').value.trim(); $('#keyMsg').textContent = 'Testing…';
+    try { const r = await fetch('https://www.googleapis.com/youtube/v3/videos?part=id&chart=mostPopular&maxResults=1&key=' + encodeURIComponent(k)); const j = await r.json(); $('#keyMsg').innerHTML = r.ok ? '<span class="up">Key works.</span>' : '<span class="hot">' + esc(j.error ? j.error.message : 'HTTP ' + r.status) + '</span>'; }
+    catch (e) { $('#keyMsg').innerHTML = '<span class="hot">Could not reach YouTube: ' + esc(e.message) + '</span>'; }
+  };
+  $('#saveAll').onclick = () => {
+    const num = (id, d) => { const v = parseFloat($(id).value); return isNaN(v) ? d : v; };
+    config.breakoutRatio = num('#sBr', 3); config.minBreakoutViews = num('#sMin', 2000); config.decayDays = num('#sDec', 4);
+    config.smallCreatorMaxSubs = num('#sSmall', 150000); config.saturationChannels = num('#sSat', 8); config.maxDiscoveredChannels = num('#sDisc', 120);
+    config.regionCode = $('#sReg').value.trim() || 'US'; config.timeZone = $('#sTz').value.trim() || undefined;
+    config.focus = [...document.querySelectorAll('[data-focus]')].filter(b => b.checked).map(b => b.dataset.focus);
+    config.queries = $('#sQ').value.split('\n').map(l => l.split('|').map(s => s.trim())).filter(p => p[0]).map(([q, o, h]) => ({ q, order: o === 'date' ? 'date' : 'viewCount', hours: Math.max(1, parseInt(h) || 168) }));
+    config.weapons = $('#sW').value.split('\n').map(s => s.trim()).filter(Boolean);
+    saveConfig(); ui.viralMin = config.breakoutRatio; recompute(); $('#saveMsg').textContent = 'Saved. Analysis recalculated from stored data (no quota used).';
+  };
+  $('#reset').onclick = () => { const comps = config.competitors; config = C.mergeConfig({ competitors: comps }); saveConfig(); recompute(); rSettings(); };
+  $('#exp').onclick = () => download(`resurgence-ai-export-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify({ kind: 'resurgence-ai-export', config, research, history }), 'application/json');
+  $('#imp').onchange = async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try {
+      const j = JSON.parse(await f.text());
+      if (j.kind === 'resurgence-ai-export') { config = C.mergeConfig(j.config); research = j.research; history = j.history || []; }
+      else if (Array.isArray(j)) history = mergeHistory(history, j);
+      else if (j.researchedAt && j.videos) research = (!research || j.researchedAt > research.researchedAt) ? j : research;
+      else throw new Error('Unrecognised file');
+      saveConfig(); LS.set('research', research); LS.set('history', history); recompute(); $('#dataMsg').textContent = 'Imported ' + f.name;
+    } catch (err) { $('#dataMsg').textContent = 'Import failed: ' + err.message; }
+  };
+  $('#cfgCopy').onclick = async () => { const out = { ...config }; for (const k of Object.keys(out)) if (JSON.stringify(out[k]) === JSON.stringify(C.DEFAULT_CONFIG[k])) delete out[k]; out.competitors = config.competitors; try { await navigator.clipboard.writeText(JSON.stringify(out, null, 2)); $('#dataMsg').textContent = 'Copied. Paste it over config.json so the daily script uses the same settings.'; } catch { download('config.json', JSON.stringify(out, null, 2), 'application/json'); } };
+  $('#clr').onclick = () => { research = null; history = []; LS.set('research', null); LS.set('history', []); recompute(); rSettings(); };
+}
+function mergeHistory(a, b) { let h = a; for (const s of b) h = C.addSnapshot(h, s); return h; }
+
+// ---------------- RUN ----------------
+async function runResearch() {
+  const key = apiKey();
+  if (!key) { location.hash = '#settings'; banner('Add your YouTube Data API key first. Research needs it.', true); return; }
+  if (location.protocol === 'file:') { /* fetch to googleapis works from file:// in Chrome/Edge/Firefox */ }
+  $('#overlay').classList.add('on'); $('#banners').innerHTML = '';
+  let n = 0;
+  try {
+    const r = await C.research({ apiKey: key, config, onProgress: p => { n++; $('#prog').textContent = p.msg; $('#progq').textContent = p.quota + ' quota units used'; $('#progbar').style.width = Math.min(97, 3 + n * 4) + '%'; } });
+    config.competitors = r.competitors.map(c => {
+      const prev = config.competitors.find(x => x.input === c.input) || {};
+      const status = prev.id && prev.id === c.id && prev.status ? prev.status : (c.status || (c.id ? 'verified' : 'not found'));
+      return { input: c.input, id: c.id, status, matchedBy: c.matchedBy || prev.matchedBy };
+    });
+    saveConfig();
+    research = r; LS.set('research', r);
+    const a = C.analyze(r, config, history);
+    history = C.addSnapshot(history, C.snapshot(r, a)); LS.set('history', history);
+    if (r.errors.length) banner('<b>Research finished with ' + r.errors.length + ' problem(s):</b><br>' + r.errors.slice(0, 6).map(esc).join('<br>') + (r.errors.some(e => /quota/i.test(e)) ? '<br>Daily quota hit: results are partial. Quota resets at midnight Pacific.' : ''), true);
+  } catch (e) {
+    banner('<b>Research failed:</b> ' + esc(e.message) + (e.reason === 'quotaExceeded' ? ' (daily quota used up; resets at midnight Pacific)' : e.reason === 'keyInvalid' || /API key/i.test(e.message) ? ' (check the key in Settings)' : '') + '. Nothing was saved, so the dashboard still shows the last successful research.', true);
+  } finally { $('#overlay').classList.remove('on'); recompute(); }
+}
+$('#refresh').onclick = runResearch;
+
+function recompute() {
+  if (research && research.competitors) for (const c of config.competitors) if (!c.id) { const r = research.competitors.find(x => x.input === c.input && x.id); if (r) { c.id = r.id; c.status = c.status || r.status || 'verified'; c.matchedBy = r.matchedBy; } }
+  A = research ? C.analyze(research, config, history.filter(s => s.at !== research.researchedAt)) : null;
+  $('#stamp').innerHTML = research ? `Latest research: <b>${esc(when(research.researchedAt))}</b> · ${A.counts.recent} recent long-form videos · ${research.quotaUsed} quota units <span class="tag tv">Verified</span>` : 'No research yet: <a href="#settings">add your API key</a>, then run research';
+  if (research) {
+    const ageH = (Date.now() - Date.parse(research.researchedAt)) / 36e5;
+    if (ageH > 26 && !$('#stale')) banner(`<span id="stale">This research is ${Math.round(ageH)} hours old. Run research or check your daily automation before trusting “today”.</span>`);
+  }
+  route();
+}
+const views = { today: rToday, ideas: rIdeas, trends: rTrends, competitors: rCompetitors, weapons: rWeapons, viral: rViral, titles: rTitles, mine: rMine, history: rHistory, report: rReport, settings: rSettings };
+function route() {
+  const v = (location.hash || '#today').slice(1);
+  const name = views[v] ? v : 'today';
+  document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id === 'v-' + name));
+  document.querySelectorAll('nav a').forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + name));
+  views[name]();
+}
+window.addEventListener('hashchange', route);
+
+// When served over http (npm start / GitHub Pages), pick up the daily script's output automatically.
+async function loadServed() {
+  if (!/^https?:/.test(location.protocol)) return;
+  try {
+    if (LS.get('config', null) == null) { const c = await fetch('config.json', { cache: 'no-store' }); if (c.ok) config = C.mergeConfig(await c.json()); }
+    const [l, h] = await Promise.all([fetch('data/latest.json', { cache: 'no-store' }), fetch('data/history.json', { cache: 'no-store' })]);
+    if (h.ok) { history = mergeHistory(history, await h.json()); LS.set('history', history); }
+    if (l.ok) { const j = await l.json(); if (!research || j.researchedAt > research.researchedAt) { research = j; LS.set('research', j); } }
+  } catch (e) { /* no served data: fine */ }
+}
+loadServed().finally(recompute);
+}
+</script>
+</body>
+</html>

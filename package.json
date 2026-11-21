@@ -1,0 +1,12 @@
+{
+  "name": "resurgence-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "YouTube trend research and content strategy for Warzone Resurgence, built on the YouTube Data API v3.",
+  "type": "commonjs",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node scripts/server.mjs",
+    "research": "node scripts/daily-research.mjs"
+  }
+}
