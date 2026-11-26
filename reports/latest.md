@@ -1,69 +1,67 @@
 # Resurgence AI: daily report
-Research completed: **Wednesday, November 25, 2026 at 2:27 PM** · 144 long-form videos from the last 7 days · 164 channels · 1261 API quota units
+Research completed: **Thursday, November 26, 2026 at 2:16 PM** · 149 long-form videos from the last 7 days · 152 channels · 1261 API quota units
 
 > Views, dates, titles and links are VERIFIED (YouTube Data API). Multiples, heat and momentum are CALCULATED from that data. Ideas, titles, thumbnails and scores are PREDICTIONS.
 
 ## 1. What's trending in Warzone Resurgence today?
-- **Sniper / one-shot**: Rising (1.48×), 6 uploads in 48h from 6 channels, 2 breakout(s), heat 0.84× vs last snapshot
-- **SMG meta**: Rising (1.52×), 4 uploads in 48h from 4 channels, 3 breakout(s), heat 0.61× vs last snapshot
-- **Movement**: Rising (1.72×), 4 uploads in 48h from 3 channels, 2 breakout(s), heat 0.73× vs last snapshot
-- **Controller vs keyboard**: Rising (5.15×), 2 uploads in 48h from 2 channels, 0 breakout(s), heat 4.31× vs last snapshot
-- **Season / update news**: Steady (0.86×), 4 uploads in 48h from 4 channels, 2 breakout(s), heat 0.88× vs last snapshot
+- **Sniper / one-shot**: Rising (1.84×), 6 uploads in 48h from 6 channels, 2 breakout(s), heat 1.35× vs last snapshot
+- **Movement**: Rising (2.91×), 8 uploads in 48h from 6 channels, 2 breakout(s), heat 1.84× vs last snapshot
+- **SMG meta**: Rising (1.48×), 4 uploads in 48h from 4 channels, 0 breakout(s), heat 0.68× vs last snapshot
+- **Season / update news**: Steady (0.92×), 4 uploads in 48h from 4 channels, 2 breakout(s), heat 1.09× vs last snapshot
+- **Ranked**: Cooling (0.35×), 2 uploads in 48h from 2 channels, 1 breakout(s), heat 1.85× vs last snapshot
 
 ## 2. What weapons are gaining popularity?
-- **Draco**: 1 videos / 1 channels this week, 30K views, Rising (7×)
-- **M4**: 5 videos / 5 channels this week, 65K views, Steady (1.19×)
-- **KAR98K**: 8 videos / 7 channels this week, 116K views, Rising (1.74×)
-- **HAN-86**: 2 videos / 2 channels this week, 11K views, Rising (3.86×)
-- **Mosin**: 5 videos / 4 channels this week, 40K views, Rising (2.21×)
-- Meta shift: **Striga → *NEW* BROKEN SMG** ([Goodbye WZ.55 Striga, Hello *NEW* BROKEN SMG in Warzone! (Best Warzone Meta Loadout)](https://www.youtube.com/watch?v=3GvSnOqrZ2I))
+- **KAR98K**: 8 videos / 7 channels this week, 123K views, Rising (2.99×)
+- **M4**: 5 videos / 5 channels this week, 102K views, Rising (2.63×)
+- **HAN-86**: 2 videos / 2 channels this week, 22K views, Rising (5.34×)
+- **MP7**: 2 videos / 2 channels this week, 3.3K views, Rising (1.86×)
+- **Astaroth .57**: 2 videos / 2 channels this week, 28K views, Rising (1.84×)
 - Meta shift: **CRONEN → M4** ([Goodbye CRONEN, Hello M4 Meta on MW4 Warzone 👑 (70 Kills)](https://www.youtube.com/watch?v=qupJyKHce0s))
 - Meta shift: **VEL-46 → X-58 NYX** ([Goodbye VEL-46, Hello X-58 NYX Meta on Rebirth Island 👑 (133 Kills)](https://www.youtube.com/watch?v=NZGEeAGjU20))
 
 ## 3. Which creators are getting the most attention?
-- **Skytrz**: 4 uploads, 122K views this week, median 11.9× their norm, best 17.9×
-- **inovha**: 1 uploads, 1.6K views this week, median 13.6× their norm, best 13.6×
-- **JoeWo**: 1 uploads, 100K views this week, median 7.8× their norm, best 7.8×
-- **JAO TV**: 1 uploads, 10K views this week, median 6.7× their norm, best 6.7×
-- **Nexzou**: 1 uploads, 21K views this week, median 4.0× their norm, best 4.0×
+- **exely**: 2 uploads, 77K views this week, median 22.1× their norm, best 32.7×
+- **Skytrz**: 5 uploads, 242K views this week, median 13.8× their norm, best 148.5×
+- **JoeWo**: 2 uploads, 128K views this week, median 7.4× their norm, best 8.0×
+- **JAO TV**: 1 uploads, 11K views this week, median 6.2× their norm, best 6.2×
+- **devised** (tracked): 7 uploads, 162K views this week, median 3.1× their norm, best 15.9×
 
 ## 4. What videos are unexpectedly blowing up?
-- [REBIRTH ISLAND SOLO VS QUADS! #1 PLAYER ON MY STREET](https://www.youtube.com/watch?v=h4NU93NuYlI) by Galaxywz: 44K views in 41m = **31.67×** its channel's age-adjusted norm (28K typical) · low confidence
-- [#1 Rebirth Player in the WORLD! 45+ Elims PER GAME 12KD](https://www.youtube.com/watch?v=OM11PIU4rFc) by Skytrz: 34K views in 43h = **17.88×** its channel's age-adjusted norm (5.3K typical)
-- [#1 Rebirth Player in the WORLD! 45+ Elims PER GAME 12KD](https://www.youtube.com/watch?v=Ex_OYrAIGpE) by Skytrz: 43K views in 3d = **15.9×** its channel's age-adjusted norm (5.3K typical)
-- [the NEW DRACO Meta is PERFECT on Rebirth Island 👑 (141 Kills)](https://www.youtube.com/watch?v=TClG05Fl0Ps) by devised: 30K views in 28h = **11.28×** its channel's age-adjusted norm (11K typical)
-- [#1 Rebirth Player in the WORLD! 45+ Elims PER GAME 12KD](https://www.youtube.com/watch?v=HFfxr-tx0QI) by Skytrz: 29K views in 5d = **7.95×** its channel's age-adjusted norm (5.3K typical)
-- [The AMAX is BACK in Warzone](https://www.youtube.com/watch?v=fb9pac7gw9c) by JoeWo: 100K views in 2d = **7.83×** its channel's age-adjusted norm (30K typical)
+- [#1 Rebirth Player in the WORLD! 45+ Elims PER GAME 12KD](https://www.youtube.com/watch?v=RnlPaGVqIS8) by Skytrz: 120K views in 17h = **148.53×** its channel's age-adjusted norm (4.9K typical)
+- [#1 Rebirth Player 2x World Record Holder](https://www.youtube.com/watch?v=dt9ggVvXg3Q) by exely: 33K views in 5h = **32.66×** its channel's age-adjusted norm (20K typical) · low confidence
+- [#1 Warzone Ranked Player RETURNS !| @adriann](https://www.youtube.com/watch?v=M-5UTCGNltQ) by adrian: 7.2K views in 25m = **23.37×** its channel's age-adjusted norm (6.2K typical) · low confidence
+- [the NEW DRACO Meta is PERFECT on Rebirth Island 👑 (141 Kills)](https://www.youtube.com/watch?v=TClG05Fl0Ps) by devised: 71K views in 2d = **15.86×** its channel's age-adjusted norm (11K typical)
+- [#1 Rebirth Player in the WORLD! 45+ Elims PER GAME 12KD](https://www.youtube.com/watch?v=Ex_OYrAIGpE) by Skytrz: 43K views in 4d = **14.06×** its channel's age-adjusted norm (4.9K typical)
+- [#1 Rebirth Player in the WORLD! 45+ Elims PER GAME 12KD](https://www.youtube.com/watch?v=OM11PIU4rFc) by Skytrz: 34K views in 3d = **13.78×** its channel's age-adjusted norm (4.9K typical)
 
 ## 5. The three best videos to record today
 ### #1 Fast-movement Rebirth Island game: the techniques, then a full high-kill game using them
-Opportunity **78/100** · Upload today · competition Medium · momentum Rising · data confidence Good
+Opportunity **78/100** · Upload today · competition High · momentum Rising · data confidence Good
 
-15 long-form upload(s) on this in 7 days, 4 in the last 48h from 3 channel(s). Strongest: “The Speed Hack Movement is BACK on MW4 Warzone 👑” by Saint: 59K views in 4d, 5.7× that channel's age-adjusted norm. Momentum: rising (1.72×). 2 breakout(s) came from channels under 150K subs, so it isn't just big-creator reach.
+19 long-form upload(s) on this in 7 days, 8 in the last 48h from 6 channel(s). Strongest: “Keyboard & Mouse Movement but it's 𝑼𝑳𝑻𝑹𝑨 𝑺𝑴𝑶𝑶𝑻𝑯 + Wooting Profile 💗” by Rafiki: 9.9K views in 41h, 22.1× that channel's age-adjusted norm. Momentum: rising (2.91×). 2 breakout(s) came from channels under 150K subs, so it isn't just big-creator reach.
 
-Supporting videos: [The Speed Hack Movement is BACK on MW4 Warzone 👑](https://www.youtube.com/watch?v=qGsS1scrppo) · [The Speed Hack M4 Meta on MW4 Warzone 👑](https://www.youtube.com/watch?v=nqZbi1qeaT8) · [1200dpi = Ultra Fast Keyboard Movement on Rebirth Island💗 (50 BOMB)](https://www.youtube.com/watch?v=mLzZIFWgHnI) · [Killing Streamers with New Demon Movement + Settings](https://www.youtube.com/watch?v=tzkomss3vt8) · [The Ankle Breaking AK74u Meta on MW4 Warzone 👑](https://www.youtube.com/watch?v=Hw1Qwb_tsyM)
+Supporting videos: [Keyboard & Mouse Movement but it's 𝑼𝑳𝑻𝑹𝑨 𝑺𝑴𝑶𝑶𝑻𝑯 + Wooting Profile 💗](https://www.youtube.com/watch?v=SFpP2Dw7O-g) · [Big MW4 Warzone Rebirth Island Resurgence Camo Grind Meta Weapons Movement Loadouts #marzzfrommarzz](https://www.youtube.com/watch?v=hW3Ecp9yWP0) · [The Speed Hack Movement is BACK on MW4 Warzone 👑](https://www.youtube.com/watch?v=qGsS1scrppo) · [The Speed Hack M4 Meta on MW4 Warzone 👑](https://www.youtube.com/watch?v=nqZbi1qeaT8) · [Killing Streamers with New Demon Movement + Settings](https://www.youtube.com/watch?v=tzkomss3vt8)
 
-### #2 Controller vs keyboard on Rebirth Island, with your settings and clips as evidence
-Opportunity **76/100** · Upload today · competition Low · momentum Rising · data confidence Moderate
+### #2 High-kill Rebirth Island game with the KAR98K meta: show the build first, then the kills
+Opportunity **66/100** · Upload today · competition Low · momentum Rising · data confidence Good
 
-3 long-form upload(s) on this in 7 days, 2 in the last 48h from 2 channel(s). Strongest: “Rebirth Island But my KEYBOARD is from WALMART” by inovha: 1.6K views in 5h, 13.6× that channel's age-adjusted norm. Momentum: rising (5.15×).
+8 long-form upload(s) on this in 7 days, 2 in the last 48h from 2 channel(s). Strongest: “The KAR98 is BACK....with a Twist...” by JoeWo: 17K views in 7h, 8.0× that channel's age-adjusted norm. Momentum: rising (2.99×).
 
-Supporting videos: [Rebirth Island But my KEYBOARD is from WALMART](https://www.youtube.com/watch?v=B2McUakU7PM) · [1200dpi = Ultra Fast Keyboard Movement on Rebirth Island💗 (50 BOMB)](https://www.youtube.com/watch?v=mLzZIFWgHnI) · [Keyboard & Mouse Movement To Sit Back & Relax To](https://www.youtube.com/watch?v=u1bgrmfF8Ug)
+Supporting videos: [The KAR98 is BACK....with a Twist...](https://www.youtube.com/watch?v=SnMmmgFOJE4) · [The #1 Sniper in BO7 is Back and BETTER in MW4 Warzone(OG KAR98k)](https://www.youtube.com/watch?v=sbX900f9lDc) · [No Sniper Can Beat the KAR98 in Warzone Solo!](https://www.youtube.com/watch?v=QNrLpU49_iM) · [this NEW KAR98 LOADOUT is AMAZING in REBIRTH ISLAND WARZONE!](https://www.youtube.com/watch?v=kGhULAZ0LDw) · [the *NEW* ONE SHOT KAR98K in REBIRTH ISLAND 👑](https://www.youtube.com/watch?v=vWc8GZ40LOw)
 
-### #3 Fastest-killing SMG setup (M4) in a long-form Rebirth Island game
-Opportunity **72/100** · Upload today · competition Medium · momentum Rising · data confidence Good
+### #3 High-kill Rebirth Island game with the HAN-86 meta: show the build first, then the kills
+Opportunity **63/100** · Upload in 1–2 days · competition Low · momentum Rising · data confidence Low
 
-16 long-form upload(s) on this in 7 days, 4 in the last 48h from 4 channel(s). Strongest: “Goodbye WZ.55 Striga, Hello *NEW* BROKEN SMG in Warzone! (Best Warzone Meta Loadout)” by Expel+: 6.3K views in 7h, 4.0× that channel's age-adjusted norm. Momentum: rising (1.52×). 2 breakout(s) came from channels under 150K subs, so it isn't just big-creator reach.
+2 long-form upload(s) on this in 7 days, 1 in the last 48h from 1 channel(s). Strongest: “the *2 SHOT* HAN-86 Meta is INSANE on Rebirth Island 👑 (134 Kills)” by devised: 13K views in 28h, 4.7× that channel's age-adjusted norm. Momentum: rising (5.34×). 1 breakout(s) came from channels under 150K subs, so it isn't just big-creator reach.
 
-Supporting videos: [Goodbye WZ.55 Striga, Hello *NEW* BROKEN SMG in Warzone! (Best Warzone Meta Loadout)](https://www.youtube.com/watch?v=3GvSnOqrZ2I) · [The M4 as an SMG is SO GOOD on Rebirth Island!? 😍 (MW4 Warzone)](https://www.youtube.com/watch?v=qITUzz9xAC0) · [the *NEW* FASTEST CSG-35 SMG Meta on Rebirth Island 👑 (131 Kills)](https://www.youtube.com/watch?v=srbHarM7tC4) · [The #1 PERFECT SMG META on Rebirth Island👑](https://www.youtube.com/watch?v=IgF2lWCrnVo) · [the NEW #1 FASTEST SMG Meta on Rebirth Island 👑 (139 Kills)](https://www.youtube.com/watch?v=MPob7VKnVlY)
+Supporting videos: [the *2 SHOT* HAN-86 Meta is INSANE on Rebirth Island 👑 (134 Kills)](https://www.youtube.com/watch?v=vciHWCqcdSU) · [this HAN 86 LOADOUT is *BROKEN* in Warzone! 😍 (Best HAN 86 Class Setup)](https://www.youtube.com/watch?v=fwsOZVr6izg)
 
 ## 6. Title and thumbnail to use
-- Title: **This M4 Movement Makes You UNKILLABLE on Rebirth Island** (title score 88/100; replace XX with your real kill count)
-- Alternates: XX Kills w/ SPEED HACK Movement on Rebirth Island 👑 / The FASTEST Movement on Rebirth Island 👑
+- Title: **This M4 Movement Makes You UNKILLABLE on Rebirth Island** (title score 85/100; replace XX with your real kill count)
+- Alternates: XX Kills w/ SPEED HACK Movement on Rebirth Island 👑 / Low Sens = PERFECT Movement on Rebirth Island 👑
 - Thumbnail: Mid-slide action frame with motion blur, bright arrow tracing your path, 2-word text "TOO FAST".
 
 ## 7. What to avoid
-- **Striga**: being replaced: “Goodbye Striga” titles this week
 - **CRONEN**: being replaced: “Goodbye CRONEN” titles this week
 - **VEL-46**: being replaced: “Goodbye VEL-46” titles this week
 
